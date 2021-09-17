@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
+import Persons from './components/Persons'
 
 const people = [
   { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -23,6 +26,7 @@ const App = () => {
       person.name.toLowerCase().includes(searchTerm)
     )
     setSearchResult(results)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm])
 
   const addPerson = event => {
@@ -43,42 +47,28 @@ const App = () => {
   }
 
   const handleNameChange = event => {
-    console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = event => {
-    console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with{' '}
-        <input type='text' value={searchTerm} onChange={handleChange} />
-      </div>
+      <Filter searchTerm={searchTerm} handleChange={handleChange} />
 
       <h2>add a new</h2>
-
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
+      <PersonForm
+        addPerson={addPerson}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
       <h2>Numbers</h2>
-      {searchResult.map(person => (
-        <div key={person.name}>
-          {person.name} {person.number}
-        </div>
-      ))}
+      <Persons searchResult={searchResult} />
     </div>
   )
 }
