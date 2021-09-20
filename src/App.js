@@ -10,12 +10,10 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
-  const [searchResult, setSearchResult] = useState([])
 
   useEffect(() => {
     axios.get('http://localhost:3001/persons').then(response => {
       setPersons(response.data)
-      setSearchResult(response.data)
     })
   }, [])
 
@@ -23,13 +21,11 @@ const App = () => {
     setSearchTerm(event.target.value)
   }
 
-  useEffect(() => {
-    const results = persons.filter(person =>
-      person.name.toLowerCase().includes(searchTerm)
-    )
-    setSearchResult(results)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm])
+  const results = !searchTerm
+    ? persons
+    : persons.filter(person =>
+        person.name.toLowerCase().includes(searchTerm.toLocaleLowerCase())
+      )
 
   const addPerson = event => {
     event.preventDefault()
@@ -44,9 +40,11 @@ const App = () => {
       number: newNumber
     }
 
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
+    axios.post('http://localhost:3001/persons', personObject).then(response => {
+      setPersons(persons.concat(personObject))
+      setNewName('')
+      setNewNumber('')
+    })
   }
 
   const handleNameChange = event => {
@@ -71,7 +69,7 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons searchResult={searchResult} />
+      <Persons results={results} />
     </div>
   )
 }
