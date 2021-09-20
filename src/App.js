@@ -45,7 +45,6 @@ const App = () => {
       setNewNumber('')
     })
   }
-
   const removePerson = (id, name) => {
     if (window.confirm(`Delete ${name} ?`)) {
       peopleService.remove(id).then(() => {
