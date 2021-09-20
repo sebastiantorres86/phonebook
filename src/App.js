@@ -3,12 +3,15 @@ import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Person from './components/Person'
 import peopleService from './services/people'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [message, setMessage] = useState(null)
+  const [style, setStyle] = useState('')
 
   useEffect(() => {
     peopleService.getAll().then(initialPeople => {
@@ -39,6 +42,11 @@ const App = () => {
     if (!duplicateName) {
       peopleService.create(personObject).then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
+        setStyle('success')
+        setMessage(`Added ${personObject.name}`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
     } else if (duplicateName && duplicateNumber) {
       window.alert(`${newName} is already added to the phonebook`)
@@ -56,6 +64,11 @@ const App = () => {
                   person.id !== changedPerson.id ? person : response
                 )
               )
+              setStyle('success')
+              setMessage(`Updated ${personObject.name}`)
+              setTimeout(() => {
+                setMessage(null)
+              }, 5000)
             })
         : setPersons(persons)
     }
@@ -84,8 +97,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification style={style} message={message} />
       <Filter searchTerm={searchTerm} handleChange={handleChange} />
-
       <h2>add a new</h2>
       <PersonForm
         addPerson={addPerson}
